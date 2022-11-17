@@ -7,6 +7,11 @@ RUN apt-get -y update && apt-get install -y
 # Install the Clang compiler
 RUN apt-get -y install clang
 
+RUN apt-get -y install git
+
+RUN git clone https://github.com/ggerganov/whisper.cpp
+
+
 # Copy the current folder which contains C++ source code to the Docker image under /usr/src
 COPY . /usr/src/dockertest1
 
