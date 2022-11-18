@@ -5,21 +5,21 @@ FROM ubuntu:latest
 RUN apt-get -y update && apt-get install -y
 
 # Install the Clang compiler
-RUN apt-get -y install clang
-
-RUN apt-get -y install git
+RUN apt-get -y install clang && apt-get -y install git \
+&& apt-get -y install wget &&  apt-get -y install build-essential\
+&& apt-get clean \
+&& rm -rf /var/lib/apt/lists/*
 
 RUN git clone https://github.com/ggerganov/whisper.cpp
 
+WORKDIR whisper.cpp
 
-# Copy the current folder which contains C++ source code to the Docker image under /usr/src
-COPY . /usr/src/dockertest1
+RUN ./models/download-ggml-model.sh base.en
 
-# Specify the working directory
-WORKDIR /usr/src/dockertest1/cpp_dir
+RUN make
 
-# Use Clang to compile the Test.cpp source file
-RUN clang++ -o test test.cpp
+RUN ./main -m models/ggml-base.en.bin -f samples/jfk.wav
+
 
 # Run the output program from the previous step
-CMD ["./test"]
+CMD ["bash"]
